@@ -7,6 +7,7 @@ package za.co.bruynhuis.ld44.game;
 
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.BetterCharacterControl;
+import com.jme3.math.Vector3f;
 
 /**
  *
@@ -29,5 +30,7 @@ public class MyCharacterControl extends BetterCharacterControl {
         
     }
 
-    
+    public Vector3f getPosition() {
+        return rigidBody.getPhysicsLocation();
+    }
 }

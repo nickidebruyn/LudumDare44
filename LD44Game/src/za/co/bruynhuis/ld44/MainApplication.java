@@ -13,6 +13,7 @@ import com.bruynhuis.galago.resource.ModelManager;
 import com.bruynhuis.galago.resource.ScreenManager;
 import com.bruynhuis.galago.resource.SoundManager;
 import com.bruynhuis.galago.resource.TextureManager;
+import com.bruynhuis.galago.ui.FontStyle;
 import com.bruynhuis.galago.util.ColorUtils;
 import com.jme3.math.Vector3f;
 import za.co.bruynhuis.ld44.screens.CreditsScreen;
@@ -31,13 +32,13 @@ public class MainApplication extends Base3DApplication {
     }
 
     public MainApplication() {
-        super("Paper Boy", 1280, 800, "ld44.save", null, null, false);
+        super("Paper Boy", 1280, 800, "ld44.save", "Interface/Fonts/RockSalt.ttf", null, false);
     }
 
     @Override
     protected void preInitApp() {
         BACKGROUND_COLOR = ColorUtils.rgb(255, 255, 255);
-//        setOrthographicProjection(6);
+        setOrthographicProjection(6);
     }
 
     @Override
@@ -70,6 +71,9 @@ public class MainApplication extends Base3DApplication {
 
     @Override
     protected void initEffect(EffectManager effectManager) {
+        effectManager.loadEffect("blooddust", "Models/effects/blooddust.j3o");
+        effectManager.loadEffect("bloodsplat1", "Models/effects/bloodsplat.j3o");
+        effectManager.loadEffect("bloodsplat2", "Models/effects/bloodsplat2.j3o");
     }
 
     @Override
@@ -78,6 +82,7 @@ public class MainApplication extends Base3DApplication {
 
     @Override
     protected void initFonts(FontManager fontManager) {
+        fontManager.loadFont(new FontStyle(50));
     }
 
 }
