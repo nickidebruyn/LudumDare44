@@ -32,13 +32,13 @@ public class MainApplication extends Base3DApplication {
     }
 
     public MainApplication() {
-        super("Paper Boy", 1280, 800, "ld44.save", "Interface/Fonts/RockSalt.ttf", null, false);
+        super("Paper Boy", 1280, 800, "ld44.save", "Interface/Fonts/RockSalt.ttf", null, true);
     }
 
     @Override
     protected void preInitApp() {
         BACKGROUND_COLOR = ColorUtils.rgb(255, 255, 255);
-        setOrthographicProjection(6);
+        setOrthographicProjection(5.6f);
     }
 
     @Override
@@ -74,6 +74,7 @@ public class MainApplication extends Base3DApplication {
         effectManager.loadEffect("blooddust", "Models/effects/blooddust.j3o");
         effectManager.loadEffect("bloodsplat1", "Models/effects/bloodsplat.j3o");
         effectManager.loadEffect("bloodsplat2", "Models/effects/bloodsplat2.j3o");
+        effectManager.loadEffect("bloodsplat3", "Models/effects/bloodsplat3.j3o");
     }
 
     @Override
@@ -83,6 +84,9 @@ public class MainApplication extends Base3DApplication {
     @Override
     protected void initFonts(FontManager fontManager) {
         fontManager.loadFont(new FontStyle(50));
+        fontManager.loadFont(new FontStyle(56, 10));
     }
 
+    
+    
 }

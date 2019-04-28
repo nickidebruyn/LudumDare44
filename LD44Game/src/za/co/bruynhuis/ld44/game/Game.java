@@ -7,6 +7,7 @@ package za.co.bruynhuis.ld44.game;
 
 import com.bruynhuis.galago.app.Base3DApplication;
 import com.bruynhuis.galago.control.RotationControl;
+import com.bruynhuis.galago.filters.CartoonEdgeProcessor;
 import com.bruynhuis.galago.games.blender3d.Blender3DGame;
 import com.bruynhuis.galago.games.blender3d.Blender3DPlayer;
 import com.bruynhuis.galago.sprite.Sprite;
@@ -16,6 +17,7 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.post.FilterPostProcessor;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -26,10 +28,13 @@ import com.jme3.scene.control.BillboardControl;
  * @author nicki
  */
 public class Game extends Blender3DGame {
+    
+    private CartoonEdgeProcessor cep;
+    private FilterPostProcessor fpp;
 
     private Sprite background;
     private float scale = 0.05f;
-    private float outlineSize = 0.06f;
+    private float outlineSize = 0.05f;
     private ColorRGBA outlineColor = ColorRGBA.Black;
     private Vector3f player2Start = new Vector3f(0, 0, 0);
 
@@ -45,6 +50,19 @@ public class Game extends Blender3DGame {
         SpatialUtils.translate(background, 0, 0, -10);
         background.addControl(new BillboardControl());
         background.scaleTextureCoords(new Vector2f(2, 2));
+        
+        cep = new CartoonEdgeProcessor();
+        baseApplication.getViewPort().addProcessor(cep);
+                
+        
+//        fpp = new FilterPostProcessor(baseApplication.getAssetManager());
+//        baseApplication.getViewPort().addProcessor(fpp);
+//        
+//        CartoonEdgeFilter cartoonEdgeFilter = new CartoonEdgeFilter();
+////        cartoonEdgeFilter.setEdgeIntensity(0.8f);
+//        cartoonEdgeFilter.setEdgeWidth(1.2f);
+//        fpp.addFilter(cartoonEdgeFilter);
+        
 
     }
 
@@ -60,11 +78,12 @@ public class Game extends Blender3DGame {
                 ColorRGBA color = (ColorRGBA) colorParam.getValue();
                 log("Color of geom = " + color);
                 SpatialUtils.addCartoonColor(spatial, null, color, outlineColor, outlineSize, false, true);
+//                SpatialUtils.addCartoonColor(spatial, null, ColorRGBA.LightGray, outlineColor, outlineSize, false, true);
             }
 
         }
 
-        if (spatial.getName().equalsIgnoreCase("enemy-start")) {
+        if (spatial.getName().equalsIgnoreCase("start2")) {
             player2Start = spatial.getWorldTranslation().clone();
 
         }
@@ -75,11 +94,12 @@ public class Game extends Blender3DGame {
         }
 
     }
-//
-//    @Override
-//    public void close() {
-//        super.close(); //To change body of generated methods, choose Tools | Templates.
-//    }
+
+    @Override
+    public void close() {
+        baseApplication.getViewPort().removeProcessor(cep);
+        super.close(); //To change body of generated methods, choose Tools | Templates.
+    }
 
     public Vector3f getPlayer2Start() {
         return player2Start;

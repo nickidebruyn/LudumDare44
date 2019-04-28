@@ -47,20 +47,24 @@ public class Player extends Blender3DPlayer implements AnimationListener {
     protected static final String DANCE = "dance";
     protected static final String VICTORY = "victory";
     protected static final String SPELL = "spell";
+    
+    public static final int MAX_HEALTH = 10;
 
     private Spatial model;
     private AnimationControl animationControl;
     private float moveSpeed = 200f;
+    private float movementDirection = 0;
     private Quaternion rotator = new Quaternion();
     private Vector3f lookDirection = new Vector3f(1, 0, 0);
     private Vector3f walkDirection = new Vector3f(0, 0, 0);
     private MyCharacterControl characterControl;
     private Timer jumpTimer = new Timer(30);
     private Timer attackTimer = new Timer(50);
+    private Timer damageTimer = new Timer(30);
     private String idleAnim = IDLE_ATTACK;
 
-    private Vector3f jumpForceRun = new Vector3f(0, 80, 0);
-    private Vector3f jumpForceStand = new Vector3f(0, 110, 0);
+    private Vector3f jumpForceRun = new Vector3f(0, 100, 0);
+    private Vector3f jumpForceStand = new Vector3f(0, 120, 0);
     private boolean walking = false;
     private boolean jumping = false;
     private boolean attacking = false;
@@ -92,7 +96,7 @@ public class Player extends Blender3DPlayer implements AnimationListener {
 
     @Override
     protected void init() {
-        lives = 5;
+        lives = MAX_HEALTH;
         model = game.getBaseApplication().getAssetManager().loadModel("Models/characters/boy.j3o");
         model.scale(2.2f);
         playerNode.attachChild(model);
@@ -140,7 +144,7 @@ public class Player extends Blender3DPlayer implements AnimationListener {
         model.depthFirstTraversal(sgv);
 
         //Load the physics part
-        characterControl = new MyCharacterControl(0.4f, 1.0f, 10f); // construct character. (If your character bounces, try increasing height and weight.)
+        characterControl = new MyCharacterControl(0.3f, 1.0f, 10f); // construct character. (If your character bounces, try increasing height and weight.)
         playerNode.addControl(characterControl); // attach to wrapper
 
         // set basic physical properties:
@@ -169,7 +173,7 @@ public class Player extends Blender3DPlayer implements AnimationListener {
                                 animationControl.play(idleAnim, true, false, 1);
                             }
 
-                        } else {
+                        } else if(!died) {
                             jumpTimer.update(tpf);
                             if (jumpTimer.finished()) {
                                 characterControl.jump();
@@ -182,6 +186,12 @@ public class Player extends Blender3DPlayer implements AnimationListener {
                                     attackWasFired = true;
                                     fireAttackFinishAction(1);
                                 }
+                            }
+                            
+                            damageTimer.update(tpf);
+                            if (damageTimer.finished()) {
+                                damage = false;
+                                damageTimer.stop();
                             }
 
                         }
@@ -199,7 +209,9 @@ public class Player extends Blender3DPlayer implements AnimationListener {
 
                     }
 
-                    if (getPosition().y < -5) {
+                    if (!game.isGameOver() && getPosition().y < -5) {
+                        lives = 0;
+                        died = true;
                         game.doGameOver();
                     }
 
@@ -285,56 +297,67 @@ public class Player extends Blender3DPlayer implements AnimationListener {
 
     }
 
-    public void setDirection(float dir) {
-        this.lookDirection.setX(dir);
-
-    }
-    
     public boolean isDead() {
         return getHealth() <= 0;
     }
 
     public void hit(int hitpoint) {
         doDamage(hitpoint);
-        
+
         game.getBaseApplication().getEffectManager().doEffect("blooddust", getPosition().add(0, 0.8f, -0.5f));
-        
-        int i = FastMath.nextRandomInt(1, 2);
-        game.getBaseApplication().getEffectManager().doEffect("bloodsplat" + i, getPosition().add(0, 0.8f, -1f), 3000);
+
+        if (hitpoint > 1) {
+            int i = FastMath.nextRandomInt(1, 2);
+            game.getBaseApplication().getEffectManager().doEffect("bloodsplat" + i, getPosition().add(0, 0.8f, -1f), 3000);
+            
+        } else {
+            int i = FastMath.nextRandomInt(1, 10);
+            if (i > 3) {
+                game.getBaseApplication().getEffectManager().doEffect("bloodsplat3", getPosition().add(0, 0.8f, -1f), 3000);
+            }            
+            
+        }
 
         if (isDead()) {
             died = true;
             animationControl.play(DIE, false, false, 1);
 
         } else {
+            damageTimer.reset();
             damage = true;
             animationControl.play(HIT, false, false, 1);
         }
 
         game.fireScoreChangedListener(score);
     }
-    
+
     public void win() {
         int index = FastMath.nextRandomInt(0, 2);
         if (index == 0) {
             animationControl.play(YELLING, true, false, 1);
-            
+
         } else if (index == 1) {
             animationControl.play(VICTORY, true, false, 1);
-            
+
         } else {
             animationControl.play(DANCE, true, false, 1);
         }
-        
+
         lookDirection.set(0, 0, 1);
-        
+
+    }
+    
+    public void setDirection(float dir) {
+        this.lookDirection.setX(dir);
+        this.movementDirection = dir;
+
     }
 
     public void walk(boolean move) {
         this.walking = move;
 
         if (move) {
-            this.walkDirection.setX(lookDirection.x);
+            this.walkDirection.setX(movementDirection);
 
         } else {
             this.walkDirection.setX(0);
@@ -403,8 +426,21 @@ public class Player extends Blender3DPlayer implements AnimationListener {
      */
     public int getDamageRange(Player player) {
         int damage = 0;
-        if (getPosition().distance(player.getPosition()) < 1f) {
-            damage = 1;
+        
+        //First we check distance
+        if (getPosition().distance(player.getPosition()) < 1.2f) {
+            
+            //We we chec facing direction
+            //Facing right
+            if (movementDirection > 0 && player.getPosition().x > getPosition().x) {
+                damage = 1;    
+                
+            }
+            
+            if (movementDirection < 0 && player.getPosition().x < getPosition().x) {
+                damage = 1;    
+            }
+                        
         }
         return damage;
     }
