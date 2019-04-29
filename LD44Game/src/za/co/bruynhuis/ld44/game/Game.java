@@ -68,7 +68,7 @@ public class Game extends Blender3DGame {
 
     @Override
     public void parse(Spatial spatial) {
-        log("Found: " + spatial.getName());
+//        log("Found: " + spatial.getName());
 
         if (spatial instanceof Geometry) {
             Material mat = ((Geometry) spatial).getMaterial();
@@ -76,7 +76,7 @@ public class Game extends Blender3DGame {
 
             if (colorParam != null) {
                 ColorRGBA color = (ColorRGBA) colorParam.getValue();
-                log("Color of geom = " + color);
+//                log("Color of geom = " + color);
                 SpatialUtils.addCartoonColor(spatial, null, color, outlineColor, outlineSize, false, true);
 //                SpatialUtils.addCartoonColor(spatial, null, ColorRGBA.LightGray, outlineColor, outlineSize, false, true);
             }

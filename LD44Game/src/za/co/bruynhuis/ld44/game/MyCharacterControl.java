@@ -17,20 +17,21 @@ public class MyCharacterControl extends BetterCharacterControl {
 
     public MyCharacterControl(float radius, float height, float mass) {
         super(radius, height, mass);
-        
+
         rigidBody.setFriction(0);
-        
-    }        
+
+    }
 
     @Override
     public void prePhysicsTick(PhysicsSpace space, float tpf) {
         super.prePhysicsTick(space, tpf); //To change body of generated methods, choose Tools | Templates.
-        
+
         rigidBody.setPhysicsLocation(rigidBody.getPhysicsLocation().multLocal(1, 1, 0));
-        
+
     }
 
     public Vector3f getPosition() {
         return rigidBody.getPhysicsLocation();
     }
+
 }

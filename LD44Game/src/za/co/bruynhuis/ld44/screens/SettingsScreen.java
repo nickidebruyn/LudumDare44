@@ -8,6 +8,7 @@ package za.co.bruynhuis.ld44.screens;
 
 import com.bruynhuis.galago.screen.AbstractScreen;
 import com.bruynhuis.galago.ui.Label;
+import com.bruynhuis.galago.util.ColorUtils;
 
 /**
  *
@@ -20,9 +21,9 @@ public class SettingsScreen extends AbstractScreen {
 
     @Override
     protected void init() {
-        title = new Label(hudPanel, "Screen Title");
-        title.centerTop(0, 0);
-        
+        title = new Label(hudPanel, "Settings", 58);
+        title.setTextColor(ColorUtils.rgb(5, 5, 5));
+        title.centerTop(0, 50);
         
     }
 

@@ -9,7 +9,6 @@ import com.bruynhuis.galago.control.AnimationControl;
 import com.bruynhuis.galago.games.blender3d.Blender3DGame;
 import com.bruynhuis.galago.games.blender3d.Blender3DPlayer;
 import com.bruynhuis.galago.listener.AnimationListener;
-import com.bruynhuis.galago.util.Debug;
 import com.bruynhuis.galago.util.SpatialUtils;
 import com.bruynhuis.galago.util.Timer;
 import com.jme3.animation.AnimControl;
@@ -47,12 +46,13 @@ public class Player extends Blender3DPlayer implements AnimationListener {
     protected static final String DANCE = "dance";
     protected static final String VICTORY = "victory";
     protected static final String SPELL = "spell";
-    
+    protected static final String WALK_BACK = "walk-back";
+
     public static final int MAX_HEALTH = 10;
 
     private Spatial model;
     private AnimationControl animationControl;
-    private float moveSpeed = 200f;
+    private float moveSpeed = 220f;
     private float movementDirection = 0;
     private Quaternion rotator = new Quaternion();
     private Vector3f lookDirection = new Vector3f(1, 0, 0);
@@ -62,6 +62,7 @@ public class Player extends Blender3DPlayer implements AnimationListener {
     private Timer attackTimer = new Timer(50);
     private Timer damageTimer = new Timer(30);
     private String idleAnim = IDLE_ATTACK;
+    private String moveAnim = RUN;
 
     private Vector3f jumpForceRun = new Vector3f(0, 100, 0);
     private Vector3f jumpForceStand = new Vector3f(0, 120, 0);
@@ -75,6 +76,7 @@ public class Player extends Blender3DPlayer implements AnimationListener {
     private ColorRGBA hairColor;
     private ColorRGBA bodyColor;
     private AttackCallback attackCallback;
+    private DamageCallback damageCallback;
     private boolean attackWasFired = false;
 
     public Player(Blender3DGame physicsGame, ColorRGBA hairColor, ColorRGBA bodyColor, float direction) {
@@ -91,6 +93,16 @@ public class Player extends Blender3DPlayer implements AnimationListener {
     private void fireAttackFinishAction(int damage) {
         if (attackCallback != null) {
             attackCallback.finishedAttack(damage);
+        }
+    }
+    
+    public void setDamageCallback(DamageCallback damageCallback) {
+        this.damageCallback = damageCallback;
+    }
+
+    private void fireDamageAction(int damage) {
+        if (damageCallback != null) {
+            damageCallback.takeDamage(damage);
         }
     }
 
@@ -110,7 +122,7 @@ public class Player extends Blender3DPlayer implements AnimationListener {
             public void visit(Spatial spatial) {
 //                    Debug.log("Spatial: " + spatial.getName());
                 if (spatial.getControl(AnimControl.class) != null && spatial.getUserData("animation") != null) {
-                    Debug.log("Found Anim Control on " + spatial.getName());
+//                    Debug.log("Found Anim Control on " + spatial.getName());
                     animationControl = new AnimationControl();
                     animationControl.addAnimationListener(Player.this);
                     spatial.addControl(animationControl);
@@ -168,12 +180,12 @@ public class Player extends Blender3DPlayer implements AnimationListener {
                         if (!jumping && !attacking && !damage && !died && characterControl.isOnGround()) {
 
                             if (walking) {
-                                animationControl.play(RUN, true, false, 1);
+                                animationControl.play(moveAnim, true, false, 1.2f);
                             } else {
                                 animationControl.play(idleAnim, true, false, 1);
                             }
 
-                        } else if(!died) {
+                        } else if (!died) {
                             jumpTimer.update(tpf);
                             if (jumpTimer.finished()) {
                                 characterControl.jump();
@@ -185,9 +197,10 @@ public class Player extends Blender3DPlayer implements AnimationListener {
                                 if (!attackWasFired) {
                                     attackWasFired = true;
                                     fireAttackFinishAction(1);
+                                    attacking = false;
                                 }
                             }
-                            
+
                             damageTimer.update(tpf);
                             if (damageTimer.finished()) {
                                 damage = false;
@@ -195,6 +208,8 @@ public class Player extends Blender3DPlayer implements AnimationListener {
                             }
 
                         }
+                        
+                        log("Damage = " + damage + "; attck = " + attacking);
 
                         //Calculation to move a character to a target position
                         rotator.lookAt(lookDirection, Vector3f.UNIT_Y);
@@ -254,7 +269,7 @@ public class Player extends Blender3DPlayer implements AnimationListener {
     @Override
     public void doDie() {
         //TODO        
-        log("Player died " + playerNode.getName());
+//        log("Player died " + playerNode.getName());
 
     }
 
@@ -283,11 +298,15 @@ public class Player extends Blender3DPlayer implements AnimationListener {
 
             } else if (animationName.equals(idleAnim)) {
                 //Pick a new idle animtion
-                int index = FastMath.nextRandomInt(0, 2);
+//                int index = FastMath.nextRandomInt(0, 2);
+                int index = FastMath.nextRandomInt(2, 2); //FORCE TO IDLE ATTACK
+                
                 if (index == 0) {
                     idleAnim = IDLE;
+                    
                 } else if (index == 1) {
                     idleAnim = LOOK;
+                    
                 } else {
                     idleAnim = IDLE_ATTACK;
                 }
@@ -301,7 +320,11 @@ public class Player extends Blender3DPlayer implements AnimationListener {
         return getHealth() <= 0;
     }
 
-    public void hit(int hitpoint) {
+    public float getMovementDirection() {
+        return movementDirection;
+    }
+
+    public void hit(int hitpoint, float direction) {
         doDamage(hitpoint);
 
         game.getBaseApplication().getEffectManager().doEffect("blooddust", getPosition().add(0, 0.8f, -0.5f));
@@ -309,15 +332,16 @@ public class Player extends Blender3DPlayer implements AnimationListener {
         if (hitpoint > 1) {
             int i = FastMath.nextRandomInt(1, 2);
             game.getBaseApplication().getEffectManager().doEffect("bloodsplat" + i, getPosition().add(0, 0.8f, -1f), 3000);
-            
+
         } else {
             int i = FastMath.nextRandomInt(1, 10);
             if (i > 3) {
                 game.getBaseApplication().getEffectManager().doEffect("bloodsplat3", getPosition().add(0, 0.8f, -1f), 3000);
-            }            
-            
+            }
+
         }
 
+        
         if (isDead()) {
             died = true;
             animationControl.play(DIE, false, false, 1);
@@ -326,7 +350,10 @@ public class Player extends Blender3DPlayer implements AnimationListener {
             damageTimer.reset();
             damage = true;
             animationControl.play(HIT, false, false, 1);
+                                    
         }
+        
+        fireDamageAction(hitpoint);
 
         game.fireScoreChangedListener(score);
     }
@@ -346,14 +373,17 @@ public class Player extends Blender3DPlayer implements AnimationListener {
         lookDirection.set(0, 0, 1);
 
     }
-    
-    public void setDirection(float dir) {
-        this.lookDirection.setX(dir);
-        this.movementDirection = dir;
 
+    public void setWalkDirection(float dir) {        
+        this.movementDirection = dir;
+    }
+    
+    public void setLookDirection(float dir) {
+        this.lookDirection.setX(dir);
+        
     }
 
-    public void walk(boolean move) {
+    public void move(boolean move) {
         this.walking = move;
 
         if (move) {
@@ -364,6 +394,18 @@ public class Player extends Blender3DPlayer implements AnimationListener {
 
         }
 
+    }
+    
+    public void moveBack(boolean move) {
+        if (move) {
+            moveAnim = WALK_BACK;
+            moveSpeed = 160;
+            
+        } else {
+            moveAnim = RUN;
+            moveSpeed = 220;
+            
+        }
     }
 
     public void jump() {
@@ -424,24 +466,53 @@ public class Player extends Blender3DPlayer implements AnimationListener {
      * @param player
      * @return
      */
-    public int getDamageRange(Player player) {
-        int damage = 0;
+    public boolean isInDamageRange(Player player, float range) {
+        boolean inrange = false;
+
+        //First we check distance
+        if (getPosition().distance(player.getPosition()) < 1.2f) {
+
+            //We we chec facing direction
+            //Facing right
+            if (movementDirection > 0 && player.getPosition().x > getPosition().x) {
+                inrange = true;
+
+            }
+
+            if (movementDirection < 0 && player.getPosition().x < getPosition().x) {
+                inrange = true;
+            }
+
+        }
         
+        return inrange;
+    }
+    
+    /**
+     * Check if the player is in range
+     * @param player
+     * @param range
+     * @return 
+     */
+    public boolean isInRange(Player player, int direction, float range) {
+        boolean inrange = false;
+
         //First we check distance
         if (getPosition().distance(player.getPosition()) < 1.2f) {
             
             //We we chec facing direction
             //Facing right
-            if (movementDirection > 0 && player.getPosition().x > getPosition().x) {
-                damage = 1;    
-                
+            if (direction > 0 && player.getPosition().x > getPosition().x) {
+                inrange = true;
+
             }
-            
-            if (movementDirection < 0 && player.getPosition().x < getPosition().x) {
-                damage = 1;    
+
+            if (direction < 0 && player.getPosition().x < getPosition().x) {
+                inrange = true;
             }
-                        
+
         }
-        return damage;
+        
+        return inrange;
     }
 }

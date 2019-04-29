@@ -16,6 +16,7 @@ import com.bruynhuis.galago.resource.TextureManager;
 import com.bruynhuis.galago.ui.FontStyle;
 import com.bruynhuis.galago.util.ColorUtils;
 import com.jme3.math.Vector3f;
+import za.co.bruynhuis.ld44.screens.CombatScreen;
 import za.co.bruynhuis.ld44.screens.CreditsScreen;
 import za.co.bruynhuis.ld44.screens.MenuScreen;
 import za.co.bruynhuis.ld44.screens.PlayScreen;
@@ -32,18 +33,18 @@ public class MainApplication extends Base3DApplication {
     }
 
     public MainApplication() {
-        super("Paper Boy", 1280, 800, "ld44.save", "Interface/Fonts/RockSalt.ttf", null, true);
+        super("Paper Combat", 1280, 720, "ld44.save", "Interface/Fonts/RockSalt.ttf", null, false);
     }
 
     @Override
     protected void preInitApp() {
-        BACKGROUND_COLOR = ColorUtils.rgb(255, 255, 255);
+        BACKGROUND_COLOR = ColorUtils.rgb(250, 250, 250);
         setOrthographicProjection(5.6f);
     }
 
     @Override
     protected void postInitApp() {
-        showScreen(PlayScreen.NAME);
+        showScreen(MenuScreen.NAME);
         bulletAppState.getPhysicsSpace().setGravity(new Vector3f(0, -20, 0));
     }
 
@@ -56,6 +57,7 @@ public class MainApplication extends Base3DApplication {
     protected void initScreens(ScreenManager screenManager) {
         screenManager.loadScreen(MenuScreen.NAME, new MenuScreen());
         screenManager.loadScreen(PlayScreen.NAME, new PlayScreen());
+        screenManager.loadScreen(CombatScreen.NAME, new CombatScreen());
         screenManager.loadScreen(SettingsScreen.NAME, new SettingsScreen());
         screenManager.loadScreen(CreditsScreen.NAME, new CreditsScreen());
 
@@ -83,8 +85,9 @@ public class MainApplication extends Base3DApplication {
 
     @Override
     protected void initFonts(FontManager fontManager) {
-        fontManager.loadFont(new FontStyle(50));
-        fontManager.loadFont(new FontStyle(56, 10));
+        fontManager.loadFont(new FontStyle(24));
+        fontManager.loadFont(new FontStyle(58));
+        fontManager.loadFont(new FontStyle(56, 6));
     }
 
     
