@@ -12,12 +12,10 @@ import com.bruynhuis.galago.games.blender3d.Blender3DGameListener;
 import com.bruynhuis.galago.listener.JoystickEvent;
 import com.bruynhuis.galago.listener.JoystickInputListener;
 import com.bruynhuis.galago.listener.JoystickListener;
-import com.bruynhuis.galago.listener.KeyboardControlEvent;
-import com.bruynhuis.galago.listener.KeyboardControlInputListener;
-import com.bruynhuis.galago.listener.KeyboardControlListener;
 import com.bruynhuis.galago.screen.AbstractScreen;
 import com.bruynhuis.galago.ui.FontStyle;
 import com.bruynhuis.galago.ui.Label;
+import com.bruynhuis.galago.ui.TextAlign;
 import com.bruynhuis.galago.ui.field.ProgressBar;
 import com.bruynhuis.galago.util.ColorUtils;
 import com.jme3.math.ColorRGBA;
@@ -26,29 +24,33 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import za.co.bruynhuis.ld44.MainApplication;
 import za.co.bruynhuis.ld44.game.AttackCallback;
-import za.co.bruynhuis.ld44.game.EnemyAIControl;
 import za.co.bruynhuis.ld44.game.Game;
 import za.co.bruynhuis.ld44.game.Player;
 import za.co.bruynhuis.ld44.game.Player2;
+import za.co.bruynhuis.ld44.input.AdvancedKeyboardControlEvent;
+import za.co.bruynhuis.ld44.input.AdvancedKeyboardControlInputListener;
+import za.co.bruynhuis.ld44.input.AdvancedKeyboardControlListener;
 
 /**
  *
  * @author nicki
  */
-public class CombatScreen extends AbstractScreen implements Blender3DGameListener, KeyboardControlListener, JoystickListener {
+public class CombatScreen extends AbstractScreen implements Blender3DGameListener, AdvancedKeyboardControlListener, JoystickListener {
 
     public static final String NAME = "CombatScreen";
     private Label title;
     private Label fightLabel;
     private ProgressBar progressBarPlayer1;
     private ProgressBar progressBarPlayer2;
+    private Label player1Name;
+    private Label player2Name;
 
     private MainApplication mainApplication;
     private Game game;
     private Player player;
     private Player player2;
 
-    private KeyboardControlInputListener keyboardControlInputListener;
+    private AdvancedKeyboardControlInputListener keyboardControlInputListener;
     private JoystickInputListener joystickInputListener;
 
     private boolean player1Left = false;
@@ -61,33 +63,49 @@ public class CombatScreen extends AbstractScreen implements Blender3DGameListene
     private int player1Wins = 0;
     private int player2Wins = 0;
 
+    public void restart() {
+        round = 0;
+        player1Wins = 0;
+        player2Wins = 0;
+    }
+
     @Override
     protected void init() {
 
         mainApplication = (MainApplication) baseApplication;
-        
-        progressBarPlayer1 = new ProgressBar(hudPanel, "Interface/progress-out.png", "Interface/progress-in.png", 300, 30);
+
+        progressBarPlayer1 = new ProgressBar(hudPanel, "Interface/progress-out.png", "Interface/progress-in.png", 350, 40);
         progressBarPlayer1.leftTop(10, 10);
         hudPanel.add(progressBarPlayer1);
-        progressBarPlayer1.setProgress(0.5f);        
-        
-        progressBarPlayer2 = new ProgressBar(hudPanel, "Interface/progress-out.png", "Interface/progress-in.png", 300, 30);
+        progressBarPlayer1.setProgress(0.5f);
+
+        progressBarPlayer2 = new ProgressBar(hudPanel, "Interface/progress-out.png", "Interface/progress-in.png", 350, 40);
         progressBarPlayer2.rightTop(10, 10);
-        progressBarPlayer2.rotate(180*FastMath.DEG_TO_RAD);
+        progressBarPlayer2.rotate(180 * FastMath.DEG_TO_RAD);
         hudPanel.add(progressBarPlayer2);
         progressBarPlayer2.setProgress(0.5f);
 
+        player1Name = new Label(hudPanel, "Player 1", 16, 350, 40);
+        player1Name.setTextColor(ColorRGBA.White);
+        player1Name.setAlignment(TextAlign.LEFT);
+        player1Name.leftTop(20, 10);
+
+        player2Name = new Label(hudPanel, "Player 2", 16, 350, 40);
+        player2Name.setTextColor(ColorRGBA.White);
+        player2Name.setAlignment(TextAlign.RIGHT);
+        player2Name.rightTop(20, 10);
+
         title = new Label(hudPanel, "Round 1", 58);
-        title.centerAt(0, 200);
+        title.centerAt(0, 10);
         title.setTextColor(ColorUtils.rgb(5, 5, 5));
 
         fightLabel = new Label(hudPanel, "Fight", 600, 50, new FontStyle(56, 6));
-        fightLabel.centerAt(0, 200);
+        fightLabel.centerAt(0, 10);
         fightLabel.setTextColor(ColorRGBA.Red);
         fightLabel.setOutlineColor(ColorUtils.rgb(5, 5, 5));
 
-        keyboardControlInputListener = new KeyboardControlInputListener();
-        keyboardControlInputListener.addKeyboardControlListener(this);
+        keyboardControlInputListener = new AdvancedKeyboardControlInputListener();
+        keyboardControlInputListener.addAdvancedKeyboardControlListener(this);
 
         joystickInputListener = new JoystickInputListener();
         joystickInputListener.addJoystickListener(this);
@@ -101,11 +119,12 @@ public class CombatScreen extends AbstractScreen implements Blender3DGameListene
 
         player2Left = false;
         player2Right = false;
+        
 
-        game = new Game(mainApplication, rootNode, "Scenes/level1.j3o");
+        game = new Game(mainApplication, rootNode, "Scenes/level3.j3o");
         game.load();
 
-        player = new Player(game, ColorUtils.rgb(83, 82, 237), ColorUtils.rgb(236, 204, 104), 1);
+        player = new Player(game, ColorUtils.rgb(0, 0, 0), ColorUtils.rgb(255, 184, 184), 1, "run");
         player.load();
         player.setAttackCallback(new AttackCallback() {
             @Override
@@ -122,7 +141,7 @@ public class CombatScreen extends AbstractScreen implements Blender3DGameListene
             }
         });
 
-        player2 = new Player2(game, null, null, -1);
+        player2 = new Player2(game, ColorUtils.rgb(190, 46, 221), ColorUtils.rgb(186, 220, 88), -1, "run2");
         player2.load();
         player2.warp(game.getPlayer2Start());
         player2.setAttackCallback(new AttackCallback() {
@@ -139,17 +158,11 @@ public class CombatScreen extends AbstractScreen implements Blender3DGameListene
 
             }
         });
-        
-        player2.getPlayerNode().addControl(new EnemyAIControl(game, player2, player, 0));
 
         game.addGameListener(this);
-        
+
         updateScore();
 
-//        chaseCamera = new ChaseCamera(camera, player.getPlayerNode(), inputManager);
-//        chaseCamera.setDefaultHorizontalRotation(FastMath.DEG_TO_RAD*90);
-//        chaseCamera.setDefaultVerticalRotation(FastMath.DEG_TO_RAD*10);
-//        chaseCamera.setDefaultDistance(10);
         camera.setLocation(new Vector3f(0, 5, 15));
         camera.lookAt(new Vector3f(0, 4.5f, 0), Vector3f.UNIT_Y);
 
@@ -177,14 +190,15 @@ public class CombatScreen extends AbstractScreen implements Blender3DGameListene
                 keyboardControlInputListener.registerWithInput(inputManager);
                 joystickInputListener.registerWithInput(inputManager);
                 showMainMessage("FIGHT");
+                game.getBaseApplication().getSoundManager().playSound("fight");
             }
         });
     }
-    
+
     private void updateScore() {
-        progressBarPlayer1.setProgress((float)player.getHealth()/(float)Player.MAX_HEALTH);
-        progressBarPlayer2.setProgress((float)player2.getHealth()/(float)Player.MAX_HEALTH);
-        
+        progressBarPlayer1.setProgress((float) player.getHealth() / (float) Player.MAX_HEALTH);
+        progressBarPlayer2.setProgress((float) player2.getHealth() / (float) Player.MAX_HEALTH);
+
     }
 
     protected void showMainMessage(String message) {
@@ -214,8 +228,45 @@ public class CombatScreen extends AbstractScreen implements Blender3DGameListene
         fightLabel.show();
         fightLabel.scaleFromTo(0, 0, 1, 1, 1f, 0.5f, Bounce.OUT, new TweenCallback() {
             @Override
-            public void onEvent(int i, BaseTween<?> bt) {                
-                showScreen(CombatScreen.NAME);
+            public void onEvent(int i, BaseTween<?> bt) {
+                fightLabel.scaleFromTo(1, 1, 0, 0, 0.5f, 2.5f, new TweenCallback() {
+                    @Override
+                    public void onEvent(int i, BaseTween<?> bt) {
+                        if (round < 3) {
+                            //Continue to next round
+                            showScreen(CombatScreen.NAME);
+
+                        } else if (player1Wins > player2Wins) {
+                            showGameCompletMessage("Player 1 wins match");
+
+                        } else if (player1Wins < player2Wins) {
+                            showGameCompletMessage("Player 2 wins match");
+
+                        } else {
+                            showGameCompletMessage("Match Draw");
+                        }
+
+                    }
+                });
+            }
+        });
+
+    }
+
+    protected void showGameCompletMessage(String message) {
+        fightLabel.setText(message);
+        fightLabel.setScale(0);
+        fightLabel.show();
+        fightLabel.scaleFromTo(0, 0, 1, 1, 1f, 0.5f, Bounce.OUT, new TweenCallback() {
+            @Override
+            public void onEvent(int i, BaseTween<?> bt) {
+                fightLabel.scaleFromTo(1, 1, 0, 0, 0.5f, 2.5f, new TweenCallback() {
+                    @Override
+                    public void onEvent(int i, BaseTween<?> bt) {
+                        showScreen(MenuScreen.NAME);
+
+                    }
+                });
             }
         });
 
@@ -232,28 +283,28 @@ public class CombatScreen extends AbstractScreen implements Blender3DGameListene
 
             if (game.isStarted() && !game.isGameOver() && !game.isPaused() && !player.isDead() && !player2.isDead()) {
                 if (player1Left) {
-                    
+
                     player.setWalkDirection(-1);
                     player.move(true);
-                    
+
                     if (player.isInRange(player2, 1, 4f)) {
                         player.setLookDirection(1);
                         player.moveBack(true);
-                        
+
                     } else {
                         player.setLookDirection(-1);
                         player.moveBack(false);
                     }
 
                 } else if (player1Right) {
-                    
+
                     player.setWalkDirection(1);
                     player.move(true);
-                    
+
                     if (player.isInRange(player2, -1, 4f)) {
                         player.setLookDirection(-1);
                         player.moveBack(true);
-                        
+
                     } else {
                         player.setLookDirection(1);
                         player.moveBack(false);
@@ -266,11 +317,11 @@ public class CombatScreen extends AbstractScreen implements Blender3DGameListene
                 if (player2Left) {
                     player2.setWalkDirection(-1);
                     player2.move(true);
-                    
+
                     if (player2.isInRange(player, 1, 4f)) {
                         player2.setLookDirection(1);
                         player2.moveBack(true);
-                        
+
                     } else {
                         player2.setLookDirection(-1);
                         player2.moveBack(false);
@@ -279,11 +330,11 @@ public class CombatScreen extends AbstractScreen implements Blender3DGameListene
                 } else if (player2Right) {
                     player2.setWalkDirection(1);
                     player2.move(true);
-                    
+
                     if (player2.isInRange(player, -1, 4f)) {
                         player2.setLookDirection(-1);
                         player2.moveBack(true);
-                        
+
                     } else {
                         player2.setLookDirection(1);
                         player2.moveBack(false);
@@ -304,12 +355,12 @@ public class CombatScreen extends AbstractScreen implements Blender3DGameListene
     @Override
     public void doGameOver() {
         log("Game over");
-        
+
         player1Left = false;
         player1Right = false;
         player2Left = false;
         player2Right = false;
-        
+
         keyboardControlInputListener.unregisterInput();
         joystickInputListener.unregisterInput();
 
@@ -319,10 +370,12 @@ public class CombatScreen extends AbstractScreen implements Blender3DGameListene
 
     private void showResults() {
         if (player2.isDead()) {
+            player1Wins++;
             player.win();
             showWinMessage("Player 1 Wins");
 
         } else if (player.isDead()) {
+            player2Wins++;
             player2.win();
             showWinMessage("Player 2 Wins");
         }
@@ -396,9 +449,11 @@ public class CombatScreen extends AbstractScreen implements Blender3DGameListene
     }
 
     @Override
-    public void onKey(KeyboardControlEvent keyboardControlEvent, float fps) {
+    public void onKey(AdvancedKeyboardControlEvent keyboardControlEvent, float fps) {
 
         if (game.isStarted() && !game.isGameOver() && !game.isPaused() && !player.isDead() && !player2.isDead()) {
+
+            //PLAYER1
             if (keyboardControlEvent.isLeft()) {
                 player1Left = keyboardControlEvent.isKeyDown();
             }
@@ -411,16 +466,34 @@ public class CombatScreen extends AbstractScreen implements Blender3DGameListene
                 player.jump();
             }
 
-            if (keyboardControlEvent.isButton4() && keyboardControlEvent.isKeyDown()) {
-//                log("Box");
+            if (keyboardControlEvent.isBox() && keyboardControlEvent.isKeyDown()) {
                 player.box();
             }
 
-            if (keyboardControlEvent.isButton2() && keyboardControlEvent.isKeyDown()) {
-//                log("Kick");
+            if (keyboardControlEvent.isKick() && keyboardControlEvent.isKeyDown()) {
                 player.kick();
             }
 
+            //PLAYER2
+            if (keyboardControlEvent.isLeft2()) {
+                player2Left = keyboardControlEvent.isKeyDown();
+            }
+
+            if (keyboardControlEvent.isRight2()) {
+                player2Right = keyboardControlEvent.isKeyDown();
+            }
+
+            if (keyboardControlEvent.isUp2() && keyboardControlEvent.isKeyDown()) {
+                player2.jump();
+            }
+
+            if (keyboardControlEvent.isBox2() && keyboardControlEvent.isKeyDown()) {
+                player2.box();
+            }
+
+            if (keyboardControlEvent.isKick2() && keyboardControlEvent.isKeyDown()) {
+                player2.kick();
+            }
         }
 
     }

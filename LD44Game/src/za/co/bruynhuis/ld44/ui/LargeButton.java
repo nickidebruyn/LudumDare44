@@ -17,10 +17,10 @@ import com.bruynhuis.galago.util.ColorUtils;
  */
 public class LargeButton extends TouchButton {
     
-    private static final float scale = 0.68f;
+    private static final float scale = 0.65f;
     
     public LargeButton(Panel panel, String id, String text) {
-        super(panel, id, "Interface/button-large.png", 340*scale, 100*scale, new FontStyle(24), true);
+        super(panel, id, "Interface/button-large.png", 350*scale, 100*scale, new FontStyle(24), true);
         setText(text);
         addEffect(new TouchEffect(this));
         setTextColor(ColorUtils.rgb(5, 5, 5));

@@ -14,8 +14,8 @@ import com.jme3.math.ColorRGBA;
  */
 public class Player2 extends Player {
     
-    public Player2(Blender3DGame physicsGame, ColorRGBA hairColor, ColorRGBA bodyColor, float direction) {
-        super(physicsGame, hairColor, bodyColor, direction);
+    public Player2(Blender3DGame physicsGame, ColorRGBA hairColor, ColorRGBA bodyColor, float direction, String runSound) {
+        super(physicsGame, hairColor, bodyColor, direction, runSound);
     }
 
     @Override

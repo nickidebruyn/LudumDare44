@@ -39,11 +39,11 @@ public class EnemyAIControl extends AbstractControl implements DamageCallback {
     private Timer attackTimer = new Timer(100);
     private boolean canAttack = true;
 
-    private Timer turnTimer = new Timer(50);
+    private Timer turnTimer = new Timer(100);
     private boolean canTurn = true;
 
     private Timer idleTimer = new Timer(200);
-    private Timer moveTimer = new Timer(100);    
+    private Timer moveTimer = new Timer(200);    
     private boolean canMove = false;
 
     public EnemyAIControl(Game game, Player player, Player opponent, int difficulty) {
@@ -56,6 +56,26 @@ public class EnemyAIControl extends AbstractControl implements DamageCallback {
         turnTimer.start();
         idleTimer.start();
         moveTimer.stop();
+//        
+//        if (difficulty == EnemyAIControl.DIFFICULTY_EASY) {
+//
+//            
+//        } else if (difficulty == EnemyAIControl.DIFFICULTY_MEDIUM) {
+//
+//            
+//        } else if (difficulty == EnemyAIControl.DIFFICULTY_DEFENSIVE) {
+//            idleTimer.setMaxTime(300);
+//            moveTimer.setMaxTime(100);
+//            attackTimer.setMaxTime(300);
+//            
+//        } else if (difficulty == EnemyAIControl.DIFFICULTY_AGGRESIVE) {
+//            idleTimer.setMaxTime(150);
+//            moveTimer.setMaxTime(100);
+//            attackTimer.setMaxTime(200);
+//
+//            
+//        }
+        
 
     }
 

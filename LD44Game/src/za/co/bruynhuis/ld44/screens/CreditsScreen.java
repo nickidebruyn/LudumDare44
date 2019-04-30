@@ -35,9 +35,12 @@ public class CreditsScreen extends AbstractScreen {
         
         info = new Label(hudPanel, "This was my entry for the 44th Ludum Dare gaming challenge.\n"
                 + "This game was writen in 72 hours and all art, sounds and code was done by myself.\n"
-                + "\n"
                 + "This was my very first one on one combat fighting game.\n"
-                + "You as player need to battle/fight your opponent and win 3 rounds.", 20, 800, 500);
+                + "You as player need to battle/fight your opponent and win 3 rounds.\n"
+                + "This game was coded in Java using jMonkeyEngine.\n"
+                + "Art was done in Blender.\n"
+                + "Audio made with Audacity.\n"
+                + "Animation blending with mixamo.", 20, 800, 460);
         info.setTextColor(ColorUtils.rgb(5, 5, 5));
         info.setWrapMode(LineWrapMode.Word);
         info.setAlignment(TextAlign.LEFT);
