@@ -1,0 +1,6 @@
+# view AndroidManifest.xml #generated:6
+-keep class com.bruynhuis.papercombat.MainActivity { <init>(...); }
+
+# view res/layout/main.xml #generated:3
+-keep class com.bruynhuis.papercombat.MainActivity$JmeFragment { <init>(...); }
+

@@ -1,0 +1,25 @@
+C:\gitwork\LudumDare44\LD44Game\mobile\bin\classes.dex : \
+C:\gitwork\LudumDare44\LD44Game\mobile\bin\classes\com\bruynhuis\papercombat\BuildConfig.class \
+C:\gitwork\LudumDare44\LD44Game\mobile\bin\classes\com\bruynhuis\papercombat\MainActivity.class \
+C:\gitwork\LudumDare44\LD44Game\mobile\bin\classes\com\bruynhuis\papercombat\R$attr.class \
+C:\gitwork\LudumDare44\LD44Game\mobile\bin\classes\com\bruynhuis\papercombat\R$drawable.class \
+C:\gitwork\LudumDare44\LD44Game\mobile\bin\classes\com\bruynhuis\papercombat\R$id.class \
+C:\gitwork\LudumDare44\LD44Game\mobile\bin\classes\com\bruynhuis\papercombat\R$layout.class \
+C:\gitwork\LudumDare44\LD44Game\mobile\bin\classes\com\bruynhuis\papercombat\R$string.class \
+C:\gitwork\LudumDare44\LD44Game\mobile\bin\classes\com\bruynhuis\papercombat\R.class \
+C:\gitwork\LudumDare44\LD44Game\mobile\bin\dexedLibs\jme3-bullet-6b6a4abd28d39d5e408ca902b68c1cd7.jar \
+C:\gitwork\LudumDare44\LD44Game\mobile\bin\dexedLibs\jme3-terrain-fe695cce8eeb352aa03c919a715c4549.jar \
+C:\gitwork\LudumDare44\LD44Game\mobile\bin\dexedLibs\gson-e766d22f99f22be05cabca5cafa9d3b3.jar \
+C:\gitwork\LudumDare44\LD44Game\mobile\bin\dexedLibs\jme3-networking-8af96f391900108bda604aa2d27e7d32.jar \
+C:\gitwork\LudumDare44\LD44Game\mobile\bin\dexedLibs\jme3-bullet-native-android-432f983e4c43f9c05a847887c1361767.jar \
+C:\gitwork\LudumDare44\LD44Game\mobile\bin\dexedLibs\jme3-plugins-0f5ecf9aaac6a4148bc4ec3d0340a7ca.jar \
+C:\gitwork\LudumDare44\LD44Game\mobile\bin\dexedLibs\PaperCombat-ebdf7dc1c086e4c88fb0df8de6ab4d83.jar \
+C:\gitwork\LudumDare44\LD44Game\mobile\bin\dexedLibs\jme3-android-native-1243f9d367b1a5591f921d6c30c294a0.jar \
+C:\gitwork\LudumDare44\LD44Game\mobile\bin\dexedLibs\sfntly-a23b4a3036aa2f91b803ff00a69c9fc1.jar \
+C:\gitwork\LudumDare44\LD44Game\mobile\bin\dexedLibs\j-ogg-all-d8a2dc96246c43a72d7a51eae0edd9d4.jar \
+C:\gitwork\LudumDare44\LD44Game\mobile\bin\dexedLibs\jme3-jogg-c8ca2a617137115c6e7a325a93df2444.jar \
+C:\gitwork\LudumDare44\LD44Game\mobile\bin\dexedLibs\jme3-core-f5bafc5218b24fe10d1d73aa6fdd1488.jar \
+C:\gitwork\LudumDare44\LD44Game\mobile\bin\dexedLibs\tween-engine-api-211ff3d2942d2fd821884a47a4dc4b05.jar \
+C:\gitwork\LudumDare44\LD44Game\mobile\bin\dexedLibs\jme3-android-c24d192012dcb9c90dba2df01d3cb30a.jar \
+C:\gitwork\LudumDare44\LD44Game\mobile\bin\dexedLibs\jme3-effects-592e16262c380e2b310cd123b3c67426.jar \
+C:\gitwork\LudumDare44\LD44Game\mobile\bin\dexedLibs\Galago-658c6af8a01d7297c11efe12810fbbad.jar \

@@ -1,0 +1,19 @@
+C:\gitwork\LudumDare44\LD44Game\mobile\bin\PaperCombat-debug-unaligned.apk : \
+C:\gitwork\LudumDare44\LD44Game\mobile\bin\PaperCombat.ap_ \
+C:\gitwork\LudumDare44\LD44Game\mobile\bin\classes.dex \
+C:\gitwork\LudumDare44\LD44Game\mobile\libs\jme3-bullet.jar \
+C:\gitwork\LudumDare44\LD44Game\mobile\libs\jme3-terrain.jar \
+C:\gitwork\LudumDare44\LD44Game\mobile\libs\gson.jar \
+C:\gitwork\LudumDare44\LD44Game\mobile\libs\jme3-networking.jar \
+C:\gitwork\LudumDare44\LD44Game\mobile\libs\jme3-bullet-native-android.jar \
+C:\gitwork\LudumDare44\LD44Game\mobile\libs\jme3-plugins.jar \
+C:\gitwork\LudumDare44\LD44Game\mobile\libs\PaperCombat.jar \
+C:\gitwork\LudumDare44\LD44Game\mobile\libs\jme3-android-native.jar \
+C:\gitwork\LudumDare44\LD44Game\mobile\libs\sfntly.jar \
+C:\gitwork\LudumDare44\LD44Game\mobile\libs\j-ogg-all.jar \
+C:\gitwork\LudumDare44\LD44Game\mobile\libs\jme3-jogg.jar \
+C:\gitwork\LudumDare44\LD44Game\mobile\libs\jme3-core.jar \
+C:\gitwork\LudumDare44\LD44Game\mobile\libs\tween-engine-api.jar \
+C:\gitwork\LudumDare44\LD44Game\mobile\libs\jme3-android.jar \
+C:\gitwork\LudumDare44\LD44Game\mobile\libs\jme3-effects.jar \
+C:\gitwork\LudumDare44\LD44Game\mobile\libs\Galago.jar \

@@ -18,6 +18,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
+import com.jme3.post.filters.FXAAFilter;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -55,9 +56,12 @@ public class Game extends Blender3DGame {
         baseApplication.getViewPort().addProcessor(cep);
                 
         
-//        fpp = new FilterPostProcessor(baseApplication.getAssetManager());
-//        baseApplication.getViewPort().addProcessor(fpp);
-//        
+        fpp = new FilterPostProcessor(baseApplication.getAssetManager());
+        baseApplication.getViewPort().addProcessor(fpp);
+
+        FXAAFilter fxaaf = new FXAAFilter();
+        fpp.addFilter(fxaaf);
+
 //        CartoonEdgeFilter cartoonEdgeFilter = new CartoonEdgeFilter();
 ////        cartoonEdgeFilter.setEdgeIntensity(0.8f);
 //        cartoonEdgeFilter.setEdgeWidth(1.2f);
@@ -98,6 +102,7 @@ public class Game extends Blender3DGame {
     @Override
     public void close() {
         baseApplication.getViewPort().removeProcessor(cep);
+        baseApplication.getViewPort().removeProcessor(fpp);
         super.close(); //To change body of generated methods, choose Tools | Templates.
     }
 
