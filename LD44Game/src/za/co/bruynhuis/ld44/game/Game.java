@@ -55,12 +55,12 @@ public class Game extends Blender3DGame {
         cep = new CartoonEdgeProcessor();
         baseApplication.getViewPort().addProcessor(cep);
                 
-        
-        fpp = new FilterPostProcessor(baseApplication.getAssetManager());
-        baseApplication.getViewPort().addProcessor(fpp);
-
-        FXAAFilter fxaaf = new FXAAFilter();
-        fpp.addFilter(fxaaf);
+//        
+//        fpp = new FilterPostProcessor(baseApplication.getAssetManager());
+//        baseApplication.getViewPort().addProcessor(fpp);
+//
+//        FXAAFilter fxaaf = new FXAAFilter();
+//        fpp.addFilter(fxaaf);
 
 //        CartoonEdgeFilter cartoonEdgeFilter = new CartoonEdgeFilter();
 ////        cartoonEdgeFilter.setEdgeIntensity(0.8f);
@@ -102,7 +102,7 @@ public class Game extends Blender3DGame {
     @Override
     public void close() {
         baseApplication.getViewPort().removeProcessor(cep);
-        baseApplication.getViewPort().removeProcessor(fpp);
+//        baseApplication.getViewPort().removeProcessor(fpp);
         super.close(); //To change body of generated methods, choose Tools | Templates.
     }
 

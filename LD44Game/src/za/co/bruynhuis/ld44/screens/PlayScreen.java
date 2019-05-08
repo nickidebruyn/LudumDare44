@@ -63,6 +63,8 @@ public class PlayScreen extends AbstractScreen implements Blender3DGameListener,
     private int round = 0;
     private int player1Wins = 0;
     private int player2Wins = 0;
+    
+    private final float playerBlockRange = 2f;
 
     @Override
     protected void init() {
@@ -308,6 +310,8 @@ public class PlayScreen extends AbstractScreen implements Blender3DGameListener,
 
     @Override
     protected void exit() {
+        joystickInputListener.unregisterInput();
+        keyboardControlInputListener.unregisterInput();
         game.close();
     }
 
@@ -321,7 +325,7 @@ public class PlayScreen extends AbstractScreen implements Blender3DGameListener,
                     player.setWalkDirection(-1);
                     player.move(true);
 
-                    if (player.isInRange(player2, 1, 4f)) {
+                    if (player.isInRange(player2, 1, playerBlockRange)) {
                         player.setLookDirection(1);
                         player.moveBack(true);
 
@@ -335,7 +339,7 @@ public class PlayScreen extends AbstractScreen implements Blender3DGameListener,
                     player.setWalkDirection(1);
                     player.move(true);
 
-                    if (player.isInRange(player2, -1, 4f)) {
+                    if (player.isInRange(player2, -1, playerBlockRange)) {
                         player.setLookDirection(-1);
                         player.moveBack(true);
 

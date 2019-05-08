@@ -62,6 +62,8 @@ public class CombatScreen extends AbstractScreen implements Blender3DGameListene
     private int round = 0;
     private int player1Wins = 0;
     private int player2Wins = 0;
+    
+    private final float playerBlockRange = 2f;
 
     public void restart() {
         round = 0;
@@ -274,6 +276,8 @@ public class CombatScreen extends AbstractScreen implements Blender3DGameListene
 
     @Override
     protected void exit() {
+        keyboardControlInputListener.unregisterInput();
+        joystickInputListener.unregisterInput();
         game.close();
     }
 
@@ -287,11 +291,13 @@ public class CombatScreen extends AbstractScreen implements Blender3DGameListene
                     player.setWalkDirection(-1);
                     player.move(true);
 
-                    if (player.isInRange(player2, 1, 4f)) {
+                    if (player.isInRange(player2, 1, playerBlockRange)) {
+                        log("Player 2 in range");
                         player.setLookDirection(1);
                         player.moveBack(true);
 
                     } else {
+                        log("Player 2 not in range");
                         player.setLookDirection(-1);
                         player.moveBack(false);
                     }
@@ -301,7 +307,7 @@ public class CombatScreen extends AbstractScreen implements Blender3DGameListene
                     player.setWalkDirection(1);
                     player.move(true);
 
-                    if (player.isInRange(player2, -1, 4f)) {
+                    if (player.isInRange(player2, -1, playerBlockRange)) {
                         player.setLookDirection(-1);
                         player.moveBack(true);
 
@@ -318,7 +324,7 @@ public class CombatScreen extends AbstractScreen implements Blender3DGameListene
                     player2.setWalkDirection(-1);
                     player2.move(true);
 
-                    if (player2.isInRange(player, 1, 4f)) {
+                    if (player2.isInRange(player, 1, playerBlockRange)) {
                         player2.setLookDirection(1);
                         player2.moveBack(true);
 
@@ -331,7 +337,7 @@ public class CombatScreen extends AbstractScreen implements Blender3DGameListene
                     player2.setWalkDirection(1);
                     player2.move(true);
 
-                    if (player2.isInRange(player, -1, 4f)) {
+                    if (player2.isInRange(player, -1, playerBlockRange)) {
                         player2.setLookDirection(-1);
                         player2.moveBack(true);
 

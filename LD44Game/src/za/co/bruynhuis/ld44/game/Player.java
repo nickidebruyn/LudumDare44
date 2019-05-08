@@ -47,7 +47,7 @@ public class Player extends Blender3DPlayer implements AnimationListener {
     protected static final String VICTORY = "victory";
     protected static final String SPELL = "spell";
     protected static final String WALK_BACK = "walk-back";
-    
+
     protected static final int ATTACK_BOX = 1;
     protected static final int ATTACK_KICK = 2;
     protected static final int ATTACK_SPELL = 3;
@@ -85,6 +85,7 @@ public class Player extends Blender3DPlayer implements AnimationListener {
     private String runSound = "run";
     private int attackType = 1;
     private float speedFactor = 1f;
+    private boolean blocking = false;
 
     public Player(Blender3DGame physicsGame, ColorRGBA hairColor, ColorRGBA bodyColor, float direction, String runSound) {
         super(physicsGame);
@@ -188,8 +189,8 @@ public class Player extends Blender3DPlayer implements AnimationListener {
                         if (!jumping && !attacking && !damage && !died && characterControl.isOnGround()) {
 
                             if (walking) {
-                                animationControl.play(moveAnim, true, false, 1.2f*speedFactor);
-                                
+                                animationControl.play(moveAnim, true, false, 1.2f * speedFactor);
+
                             } else {
                                 animationControl.play(idleAnim, true, false, 1);
                             }
@@ -286,7 +287,7 @@ public class Player extends Blender3DPlayer implements AnimationListener {
     public void doAnimationDone(String animationName) {
 
         if (!game.isGameOver()) {
-            log("Anim done = " + animationName);
+//            log("Anim done = " + animationName);
 
             if (animationName.equals(JUMPING)) {
                 jumping = false;
@@ -334,41 +335,52 @@ public class Player extends Blender3DPlayer implements AnimationListener {
     }
 
     public void hit(int hitpoint, float direction) {
-        doDamage(hitpoint);
 
-        game.getBaseApplication().getEffectManager().doEffect("blooddust", getPosition().add(0, 0.8f, -0.5f));
-
-        if (hitpoint > 1) {
-            int i = FastMath.nextRandomInt(1, 2);
-            game.getBaseApplication().getEffectManager().doEffect("bloodsplat" + i, getPosition().add(0, 0.8f, -1f), 3000);
+        if (blocking) {
+            //Do the action when the player is hit but is blocking
+            game.getBaseApplication().getEffectManager().doEffect("blooddust", getPosition().add(0, 0.8f, -0.5f));
+            game.getBaseApplication().getSoundManager().playSound("hit");
 
         } else {
-            int i = FastMath.nextRandomInt(1, 10);
-            if (i > 3) {
-                game.getBaseApplication().getEffectManager().doEffect("bloodsplat3", getPosition().add(0, 0.8f, -1f), 3000);
+            
+            //Do the action when the player is hit and not blocking
+            doDamage(hitpoint);
+
+            game.getBaseApplication().getEffectManager().doEffect("blooddust", getPosition().add(0, 0.8f, -0.5f));
+
+            if (hitpoint > 1) {
+                int i = FastMath.nextRandomInt(1, 2);
+                game.getBaseApplication().getEffectManager().doEffect("bloodsplat" + i, getPosition().add(0, 0.8f, -1f), 3000);
+
+            } else {
+                int i = FastMath.nextRandomInt(1, 10);
+                if (i > 3) {
+                    game.getBaseApplication().getEffectManager().doEffect("bloodsplat3", getPosition().add(0, 0.8f, -1f), 3000);
+                }
+
             }
 
+            if (isDead()) {
+                died = true;
+                animationControl.play(DIE, false, false, 1);
+
+            } else {
+                damageTimer.reset();
+                damage = true;
+                game.getBaseApplication().getSoundManager().playSound("hit");
+                game.getBaseApplication().getSoundManager().playSound("hurt");
+
+                if (!attacking) {
+                    animationControl.play(HIT, false, false, 1);
+                }
+
+            }
+
+            fireDamageAction(hitpoint);
+
+            game.fireScoreChangedListener(score);
         }
-        
-        if (isDead()) {
-            died = true;
-            animationControl.play(DIE, false, false, 1);
 
-        } else {
-            damageTimer.reset();
-            damage = true;
-            game.getBaseApplication().getSoundManager().playSound("hit");
-            game.getBaseApplication().getSoundManager().playSound("hurt");
-            
-            if (!attacking) {
-                animationControl.play(HIT, false, false, 1);
-            }            
-
-        }
-
-        fireDamageAction(hitpoint);
-
-        game.fireScoreChangedListener(score);
     }
 
     public void win() {
@@ -386,7 +398,7 @@ public class Player extends Blender3DPlayer implements AnimationListener {
 //            animationControl.play(DANCE, true, false, 1);
         }
 
-        lookDirection.set(0, 0, 1);        
+        lookDirection.set(0, 0, 1);
         move(false);
 
     }
@@ -402,15 +414,16 @@ public class Player extends Blender3DPlayer implements AnimationListener {
 
     public void move(boolean move) {
         this.walking = move;
+        this.blocking = false;
 
-        if (move) {                     
+        if (move) {
             this.walkDirection.setX(movementDirection);
 
         } else {            
             this.walkDirection.setX(0);
 
         }
-        
+
         if (move && characterControl.isOnGround()) {
             game.getBaseApplication().getSoundManager().setMusicSpeed(runSound, speedFactor);
             game.getBaseApplication().getSoundManager().playMusic(runSound);
@@ -422,10 +435,12 @@ public class Player extends Blender3DPlayer implements AnimationListener {
 
     public void moveBack(boolean move) {
         if (move) {
+            blocking = true;
             moveAnim = WALK_BACK;
-            moveSpeed = 160;
+            moveSpeed = 50;
 
         } else {
+            blocking = false;
             moveAnim = RUN;
             moveSpeed = 220;
 
@@ -451,7 +466,7 @@ public class Player extends Blender3DPlayer implements AnimationListener {
         }
 
     }
-    
+
     public void spell() {
 
         if ((!damage && !attacking && !died) || attackTimer.finished()) {
@@ -508,7 +523,7 @@ public class Player extends Blender3DPlayer implements AnimationListener {
     }
 
     /**
-     * Check if the player is in range of the other player.
+     * Check if the player is in range of the other player in the facing direction.
      *
      * @param player
      * @return
@@ -519,16 +534,16 @@ public class Player extends Blender3DPlayer implements AnimationListener {
 //        log("Y dis = " + yDis);
         if (yDis < 0.8f) {
             //First we check distance
-            if (getPosition().distance(player.getPosition()) < 1.2f) {
+            if (getPosition().distance(player.getPosition()) < range) {
 
                 //We we chec facing direction
                 //Facing right
-                if (movementDirection > 0 && player.getPosition().x > getPosition().x) {
+                if (lookDirection.x > 0 && player.getPosition().x > getPosition().x) {
                     inrange = true;
 
                 }
 
-                if (movementDirection < 0 && player.getPosition().x < getPosition().x) {
+                if (lookDirection.x < 0 && player.getPosition().x < getPosition().x) {
                     inrange = true;
                 }
 
@@ -552,7 +567,7 @@ public class Player extends Blender3DPlayer implements AnimationListener {
 //        log("Y dis = " + yDis);
         if (yDis < 0.8f) {
             //First we check distance
-            if (getPosition().distance(player.getPosition()) < 1.2f) {
+            if (getPosition().distance(player.getPosition()) < range) {
 
                 //We we chec facing direction
                 //Facing right
@@ -575,6 +590,5 @@ public class Player extends Blender3DPlayer implements AnimationListener {
     public void setSpeedFactor(float speedFactor) {
         this.speedFactor = speedFactor;
     }
-    
-    
+
 }
