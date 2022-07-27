@@ -18,7 +18,6 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
-import com.jme3.post.filters.FXAAFilter;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -29,7 +28,7 @@ import com.jme3.scene.control.BillboardControl;
  * @author nicki
  */
 public class Game extends Blender3DGame {
-    
+
     private CartoonEdgeProcessor cep;
     private FilterPostProcessor fpp;
 
@@ -51,23 +50,20 @@ public class Game extends Blender3DGame {
         SpatialUtils.translate(background, 0, 0, -10);
         background.addControl(new BillboardControl());
         background.scaleTextureCoords(new Vector2f(2, 2));
-        
+
         cep = new CartoonEdgeProcessor();
         baseApplication.getViewPort().addProcessor(cep);
-                
+
 //        
 //        fpp = new FilterPostProcessor(baseApplication.getAssetManager());
 //        baseApplication.getViewPort().addProcessor(fpp);
 //
 //        FXAAFilter fxaaf = new FXAAFilter();
 //        fpp.addFilter(fxaaf);
-
 //        CartoonEdgeFilter cartoonEdgeFilter = new CartoonEdgeFilter();
 ////        cartoonEdgeFilter.setEdgeIntensity(0.8f);
 //        cartoonEdgeFilter.setEdgeWidth(1.2f);
 //        fpp.addFilter(cartoonEdgeFilter);
-        
-
     }
 
     @Override

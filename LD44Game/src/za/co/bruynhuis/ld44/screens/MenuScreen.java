@@ -151,7 +151,7 @@ public class MenuScreen extends AbstractScreen implements KeyboardControlListene
         player = new Player(game, ColorRGBA.Black, ColorUtils.rgb(255, 184, 184), 1, "run");
         player.load();
 
-        camera.setLocation(new Vector3f(0, 5, 15));
+        camera.setLocation(new Vector3f(0, 6, 15));
         camera.lookAt(new Vector3f(0, 4.5f, 0), Vector3f.UNIT_Y);
 
     }

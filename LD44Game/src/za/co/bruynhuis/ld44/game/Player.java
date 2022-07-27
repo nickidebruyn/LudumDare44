@@ -222,7 +222,7 @@ public class Player extends Blender3DPlayer implements AnimationListener {
 
 //                        log("Damage = " + damage + "; attck = " + attacking);
                         //Calculation to move a character to a target position
-                        rotator.lookAt(lookDirection, Vector3f.UNIT_Y);
+                        Quaternion q = rotator.lookAt(lookDirection, Vector3f.UNIT_Y);
                         spatial.getLocalRotation().slerp(rotator, 0.2f);
                         characterControl.setViewDirection(spatial.getLocalRotation().getRotationColumn(2));
 

@@ -177,7 +177,7 @@ public class PlayScreen extends AbstractScreen implements Blender3DGameListener,
 
         updateScore();
 
-        camera.setLocation(new Vector3f(0, 5, 15));
+        camera.setLocation(new Vector3f(0, 6, 15));
         camera.lookAt(new Vector3f(0, 4.5f, 0), Vector3f.UNIT_Y);
 
     }
